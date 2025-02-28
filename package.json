@@ -14,6 +14,6 @@
   "devDependencies": {
   "@types/node": "^22.10.5",
   "typescript": "^5.7.2",
-  "@types/express": "^4.17.21"  // Bu satırı ekleyin
+  "@types/express": "^4.17.21" 
 }
 }
