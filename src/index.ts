@@ -2,10 +2,10 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ListResourcesRequestSchema, ReadResourceRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs/promises";
-import express from "express";
+import express, { Request, Response } from "express";  // Türleri ekledik
 import axios from "axios";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || "<your-huggingface-api-key>";
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || "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";
 
 const server = new Server(
   { name: "mcp-mistral-web", version: "1.0.0" },
@@ -40,7 +40,7 @@ const app = express();
 app.use(express.json());
 
 // Soru-cevap endpoint’i (Mistral ile)
-app.post("/ask", async (req, res) => {
+app.post("/ask", async (req: Request, res: Response) => {  // Türler eklendi
   const question = req.body.question;
   try {
     const content = await fs.readFile("src/izahname.txt", "utf-8");
@@ -58,13 +58,13 @@ app.post("/ask", async (req, res) => {
     );
 
     res.json({ answer: response.data[0].generated_text || "Cevap üretilmedi" });
-  } catch (error) {
+  } catch (error: any) {  // 'error' türünü 'any' olarak belirttik (veya daha spesifik bir tür kullanabilirsiniz, örneğin Error)
     res.status(500).json({ error: error.message });
   }
 });
 
 // Web sayfasını serve et
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {  // Türler eklendi
   res.send(`
     <!DOCTYPE html>
     <html lang="tr">
