@@ -40,31 +40,33 @@ const app = express();
 app.use(express.json());
 
 // Soru-cevap endpoint’i (Mistral ile)
-app.post("/ask", async (req: Request, res: Response) => {  // Türler eklendi
+app.post("/ask", async (req: Request, res: Response) => {
   const question = req.body.question;
   try {
     const content = await fs.readFile("src/izahname.txt", "utf-8");
-    const prompt = `Doküman: ${content}\nSoru: ${question}\nCevap:`;
+    const prompt = `Aşağıdaki dokümana dayanarak sorumu yanıtla. Eğer dokümanda cevap yoksa, 'Dokümanda bu soruya yanıt bulunamadı' de. Doküman: ${content}\nSoru: ${question}\nCevap:`;
 
     const response = await axios.post(
       "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
       { inputs: prompt },
       {
         headers: {
-          "Authorization": `Bearer ${HUGGINGFACE_API_KEY}`,
+          "Authorization": `Bearer ${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}`,
           "Content-Type": "application/json",
         },
       }
     );
 
-    res.json({ answer: response.data[0].generated_text || "Cevap üretilmedi" });
-  } catch (error: any) {  // 'error' türünü 'any' olarak belirttik (veya daha spesifik bir tür kullanabilirsiniz, örneğin Error)
-    res.status(500).json({ error: error.message });
+    const answer = response.data[0]?.generated_text || "Cevap üretilmedi";
+    res.json({ answer });
+  } catch (error: any) {
+    console.error("Hata detayları:", error.message);
+    res.status(500).json({ error: `Hata oluştu: ${error.message}` });
   }
 });
 
 // Web sayfasını serve et
-app.get("/", (req: Request, res: Response) => {  // Türler eklendi
+app.get("/", (req: Request, res: Response) => {
   res.send(`
     <!DOCTYPE html>
     <html lang="tr">
