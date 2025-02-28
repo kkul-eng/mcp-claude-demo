@@ -5,10 +5,10 @@ import * as fs from "fs/promises";
 import express, { Request, Response } from "express";  // Türleri ekledik
 import axios from "axios";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || "default-key"; // Ortam değişkeni veya varsayılan bir değer
+const OLLAMA_API_URL = process.env.OLLAMA_API_URL || "http://localhost:5000/ask";  // Render’da bulut IP’sine ayarlanacak
 
 const server = new Server(
-  { name: "mcp-mistral-web", version: "1.0.0" },
+  { name: "mcp-mistral-web-ollama", version: "1.0.0" },
   { capabilities: { resources: {} } }
 );
 
@@ -19,7 +19,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
       {
         uri: "file:///app/src/izahname.txt",
         name: "Izahname Document",
-        description: "Web üzerinden soru-cevap için doküman",
+        description: "Web üzerinden soru-cevap için doküman (Ollama ile)",
         mimeType: "text/plain",
       },
     ],
@@ -39,29 +39,39 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 const app = express();
 app.use(express.json());
 
-// Soru-cevap endpoint’i (Mistral ile)
+// Soru-cevap endpoint’i (Ollama üzerinden)
 app.post("/ask", async (req: Request, res: Response) => {
   const question = req.body.question;
   try {
     const content = await fs.readFile("src/izahname.txt", "utf-8");
-    const prompt = `Aşağıdaki dokümana dayanarak sorumu yanıtla. Eğer dokümanda cevap yoksa, 'Dokümanda bu soruya yanıt bulunamadı' de. Doküman: ${content}\nSoru: ${question}\nCevap:`;
-
     const response = await axios.post(
-      "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
-      { inputs: prompt },
+      OLLAMA_API_URL,
+      { question },
       {
         headers: {
-          "Authorization": `Bearer ${HUGGINGFACE_API_KEY}`,
           "Content-Type": "application/json",
         },
+        timeout: 10000,  // 10 saniye timeout
       }
     );
 
-    const answer = response.data[0]?.generated_text || "Cevap üretilmedi";
+    if (!response.data || !response.data.answer) {
+      throw new Error("API yanıtında beklenen formatta veri yok");
+    }
+
+    const answer = response.data.answer;
     res.json({ answer });
   } catch (error: any) {
     console.error("Hata detayları:", error.message);
-    res.status(500).json({ error: `Hata oluştu: ${error.message}` });
+    let errorMessage = "Cevap alınamadı";
+    if (error.response) {
+      errorMessage += `: API hatası - ${error.response.status} (${error.response.statusText})`;
+    } else if (error.request) {
+      errorMessage += `: İstek gönderilemedi - ${error.message}`;
+    } else {
+      errorMessage += `: ${error.message}`;
+    }
+    res.status(500).json({ error: errorMessage });
   }
 });
 
