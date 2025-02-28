@@ -5,7 +5,7 @@ import * as fs from "fs/promises";
 import express, { Request, Response } from "express";  // Türleri ekledik
 import axios from "axios";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || "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";
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || "default-key"; // Ortam değişkeni veya varsayılan bir değer
 
 const server = new Server(
   { name: "mcp-mistral-web", version: "1.0.0" },
@@ -51,7 +51,7 @@ app.post("/ask", async (req: Request, res: Response) => {
       { inputs: prompt },
       {
         headers: {
-          "Authorization": `Bearer ${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}`,
+          "Authorization": `Bearer ${HUGGINGFACE_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
