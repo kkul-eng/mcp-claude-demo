@@ -1,21 +1,18 @@
 {
-  "name": "mcp-claude-demo",
+  "name": "mcp-mistral-web",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node build/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.6.0",
-    "express": "^5.0.1"
+    "@modelcontextprotocol/sdk": "^1.1.0",
+    "express": "^4.19.2",
+    "axios": "^1.6.8"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.13.5",
-    "typescript": "^5.7.3"
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2"
   }
 }
