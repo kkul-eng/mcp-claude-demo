@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2022",              // Çıktı JavaScript sürümü (modern tarayıcılar ve Node.js için uygun)
-    "module": "Node16",              // Node.js 16+ için modül sistemi
-    "moduleResolution": "Node16",    // Modül çözümlemesi için Node.js 16+ kullan
-    "outDir": "./build",             // Derlenmiş dosyaların çıkacağı dizin
-    "rootDir": "./src",              // Kaynak dosyaların bulunduğu dizin
-    "strict": true,                  // Tür güvenliği için katı mod
-    "esModuleInterop": true,         // CommonJS ve ES modülleri arasında interop sağlar
-    "skipLibCheck": true,            // Tür dosyalarını kontrol etmeyi atla (hız için)
-    "forceConsistentCasingInFileNames": true  // Dosya isimlerinde tutarlılık sağlar
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"]            // `src` dizinindeki tüm TypeScript dosyalarını dahil et
+  "include": ["src/**/*"]
 }
